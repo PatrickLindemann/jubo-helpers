@@ -1,0 +1,16 @@
+{
+    "user": {
+        "email": "example@email.com",
+        "password": "Password"
+    },
+    "servers": {
+        "imap": {
+            "host": "imap.app.magix-online.com",
+            "port": 993
+        },
+        "smtp": {
+            "host": "smtp.app.magix-online.com",
+            "port": 465
+        }
+    }
+}

@@ -12,9 +12,9 @@ HEADER_ROW = 4
 Functions
 '''
 
-def read_excel(file, sheet, attr_map={}):
+def read_excel(file_path, sheet, attr_map={}):
     warnings.filterwarnings('ignore', module='openpyxl')
-    df = pd.read_excel(file, sheet_name=sheet)
+    df = pd.read_excel(file_path, sheet_name=sheet)
     warnings.filterwarnings('default', module='openpyxl')
     df = df.replace({ np.nan: None })
     # Retrieve the column header mapping

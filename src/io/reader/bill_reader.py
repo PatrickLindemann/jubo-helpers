@@ -1,5 +1,5 @@
-from model.bill import Bill
-from reader.reader import read_excel
+from src.model.bill import Bill
+from src.io.reader.excel_reader import read_excel
 
 '''
 Constants
@@ -31,7 +31,7 @@ ATTRIBUTE_MAP = {
 Functions
 '''
 
-def read_bills(file):
-    data = read_excel(file, SHEET, ATTRIBUTE_MAP)
+def read_bills(file_path):
+    data = read_excel(file_path, SHEET, ATTRIBUTE_MAP)
     bills = list(map(lambda x: Bill(**x), data))
     return bills

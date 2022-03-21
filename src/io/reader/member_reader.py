@@ -1,5 +1,5 @@
-from model.member import Member
-from reader.reader import read_excel
+from src.model.member import Member
+from src.io.reader.excel_reader import read_excel
 
 '''
 Constants
@@ -35,7 +35,7 @@ ATTRIBUTE_MAP = {
 Functions
 '''
 
-def read_members(file):
-    data = read_excel(file, SHEET, ATTRIBUTE_MAP)
+def read_members(file_path):
+    data = read_excel(file_path, SHEET, ATTRIBUTE_MAP)
     members = list(map(lambda x: Member(**x), data))
     return members

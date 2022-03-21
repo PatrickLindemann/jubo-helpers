@@ -1,39 +1,20 @@
 import argparse
-import imaplib
 import locale
-import smtplib
-import ssl
 from datetime import date, timedelta
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from locale import currency
 
-from reader.bill_reader import read_bills
-from reader.member_reader import read_members
+from src.io.reader.bill_reader import read_bills
+from src.io.reader.config_reader import read_config
+from src.io.reader.member_reader import read_members
+from src.io.remote.email_client import EmailClient
+from src.model.mail import Mail
 
 # Parse the arguments from the command line
 parser = argparse.ArgumentParser()
-parser.add_argument('input', nargs=1)
-parser.add_argument('-e', '--email')
-parser.add_argument('-p', '--password')
-parser.add_argument('-s', '--signature', default='./signature.html')
-parser.add_argument('--smtp-host', default='imap.app.magix-online.com')
-parser.add_argument('--smtp-port', default=993)
-parser.add_argument('--smtp-host', default='smtp.app.magix-online.com')
-parser.add_argument('--smtp-port', default=465)
-parser.add_argument('--include', default=None)
-parser.add_argument('--exclude', default=None)
+parser.add_argument('input')
 args = parser.parse_args()
 
-# print(f'Workbook: { args.input[0] }')
-# print(f'Email: { args.email }')
-# print(f'Password: { args.password }')
-# print(f'Signature: { args.signature }')
-# print(f'Host: { args.host }')
-# print(f'Port: { args.password }')
-
-if args.include and args.exclude:
-    raise ValueError('Specified both --include and --exclude parameters.')
+# Read the config
+config = read_config('./config.json')
 
 # Get the current year
 year = int(date.today().strftime("%Y"))
@@ -42,15 +23,16 @@ year = int(date.today().strftime("%Y"))
 locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8') 
 
 # Read the excel file with the email receipients
-print(f'Reading members and bills from "{ args.input[0] }".')
-members = read_members(args.input[0])
-bills = read_bills(args.input[0])
+print(f'Reading members and bills from "{ args.input }".')
+members = read_members(args.input)
+bills = read_bills(args.input)
 print(f'Members: { len(members) }')
 
 # Filter active, passive and inactive members
 ACTIVE_STATUSES = ('Aktiv', 'Passiv', 'Inaktiv')
 print(f'Filtering payments with members that have the status { ACTIVE_STATUSES }.')
 paying_members = list(filter(lambda m: m.status in ACTIVE_STATUSES, members))
+paying_members = list(filter(lambda m: m.email != '-', paying_members)) #TODO remove
 print(f'Payments: { len(paying_members) }')
 
 # Link the billing information to the respective member
@@ -84,30 +66,30 @@ print(f'Total amount: { locale.currency(total) }')
 confirm = input('Send the messages? [y/N]')
 if confirm.lower() != 'y':
     print('Exiting.')
-    # exit()
+    exit()
 
 # Read the signature
-with open(args.signature, 'r') as file:
+with open('./templates/signature.html', 'r') as file:
     signature = file.read()
 
 # Read the e-Mail style sheet
-with open('style.css', 'r') as file:
-    style = file.read()
+with open('./templates/styles.css', 'r') as file:
+    styles = file.read()
 
-print(f'Preparing { len(payments) } messages.')
-messages = []
+print(f'Preparing { len(payments) } payment e-mails.')
+mails = []
 for payment in payments.values():
     member = payment['member']
     bill = payment['bill']
-    message = MIMEMultipart('alternative')
-    message["Subject"] = f'JuBO e.V. | Mitgliedsbeitrag { year } & Datenaktualisierung | Mitglied Nr. { member.id } { member.first_name } { member.last_name }'
-    message["From"] = args.email
-    message["To"] = member.email
-    body = MIMEText(f'''
+    # Prepare the e-mail message
+    sender = config.user.email
+    recipient = member.email
+    subject = f'JuBO e.V. | Mitgliedsbeitrag { year } & Datenaktualisierung | Mitglied Nr. M{ member.id } { member.first_name } { member.last_name }'
+    body = f'''
         <html>
             <head>
                 <style>
-                    { style }
+                    { styles }
                 </style>
             </head>
             <body>
@@ -182,24 +164,12 @@ for payment in payments.values():
                 </p>
             </body>
         </html>
-    ''', 'html')
-    message.attach(body)
-    messages.append(message)
+    '''
+    mails.append(Mail(sender, recipient, subject, body))
 
-# with open('message.html', 'w') as file:
-#    file.write(messages[-17].get_payload()[0].as_string())
-
-# TODO Remove
-messages = [ messages[-17] ]
-
-# Send the emails
-context = ssl.create_default_context()
-with smtplib.SMTP_SSL(args.host, args.port, context=context) as server:
-    server.login(args.email, args.password)
-    for message in messages:
-        sender = message['From']
-        recipient = message['To']
-        print(f'Sending message to { recipient }')
-        # server.sendmail(sender, recipient, message.as_string())
-
-print(f'Sent { len(messages) } e-mail messages successfully.')
+client = EmailClient(config)
+for mail in mails:
+    print(f'Sending message to { mail.recipients }')
+    client.send(mail)
+client.close()
+print(f'Sent { len(mails) } e-mail message(s) successfully.')
