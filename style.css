@@ -1,0 +1,35 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+table {
+    text-align: left;
+    border-collapse: collapse;
+}
+
+hr {
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+#payment-details tr {
+    border-bottom: 1px solid black;
+}
+
+#payment-details td,
+#payment-details th {
+    padding: 10px;
+}
+
+#payment-details tr.total-row {
+    border: none;
+}
+
+#payment-details tr.total-row td, tr.total-row th {
+    font-weight: bold;
+}
+
+#bank-details td {
+    padding-bottom: 5px;
+    padding-right: 10px;
+}
