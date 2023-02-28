@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/schema",
   "type": "object",
   "properties": {
-    "contact": {
+    "author": {
       "type": "object",
       "properties": {
         "name": {
