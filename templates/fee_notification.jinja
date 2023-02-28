@@ -1,0 +1,103 @@
+<html lang="de">
+<head>
+    <style>${GLOBAL_STYLES}</style>
+    <style>
+        #payment-details tr {
+            border-bottom: 1px solid black;
+        }
+        #payment-details td,
+        #payment-details th {
+            padding: 10px;
+        }
+        #payment-details tr.total-row {
+            border: none;
+        }
+        #payment-details tr.total-row td, tr.total-row th {
+            font-weight: bold;
+        }
+        #bank-details td {
+            padding-bottom: 5px;
+            padding-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <p>
+        {% if member.salutation == 'Frau' %} Liebe {% else %} Lieber {% endif %},
+    </p>
+    <p>
+        wie jedes Jahr um diese Zeit stehen die Mitgliedsbeiträge für die JuBO e.V. zur Zahlung an. Dein diesjähriger
+        Beitrag setzt sich für Dich wie folgt zusammen:
+    </p>
+    <table id="payment-details">
+        <tr>
+            <th>Pos.</th>
+            <th>Beschreibung</th>
+            <th>Betrag</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>
+                Jahresbeitrag Mitgliedschaft ({ member.membership })<br />
+                <small>Für den Zeitraum 01.01.{ (year - 1) } - 01.01.{ year }</small>
+            </td>
+            <td>{ locale.currency(bill.fee) }</td>
+        </tr>
+        {% if bill.donation %}
+            <tr>
+                <td>2</td>
+                <td>Zusätzliche Spende</td>
+                <td>{{ locale.currency(bill.donation) }}</td>
+            </tr>
+        {% endif %}
+        <tr class="total-row">
+            <td></td>
+            <td>Gesamtsumme</td>
+            <td>{ locale.currency(bill.total) }</td>
+        </tr>
+    </table>
+    <p>
+        Da Du uns freundlicherweise ein SEPA-Lastschriftmandat erteilt hast, werden wir den fälligen Betrag i.H.v. <b>{
+            locale.currency(bill.total) }</b> zum <b>31.03.2022</b> vom folgenden Konto
+        per SEPA-Lastschrift einziehen:
+    </p>
+    <table id="bank-details">
+        <tr>
+            <td>Kontoinhaber</td>
+            <td>{ bill.first_name } { bill.last_name }</td>
+        </tr>
+        <tr>
+            <td>IBAN (anonymisiert)</td>
+            <td>{ bill.anonymized_iban() }</td>
+        </tr>
+        <tr>
+            <td>BIC (anonymisiert)</td>
+            <td>{ bill.anonymized_bic() }</td>
+        </tr>
+    </table>
+    <p>
+        Du erkennst unsere Abbuchung an der Mandatsreferenz <i>{ bill.reference }</i> und
+        Gläubiger-Identifikationsnummer <i>{ bill.creditor_id }</i>. Wir bitten um Kontodeckung zu sorgen.
+    </p>
+    <p>
+        <b>Wichtig:</b> Falls sich seit letztem Jahr Deine personenbezogenen Daten (Name, Adresse, E-Mail, Handynummer,
+        etc.) geändert haben sollten, dann antworte
+        bitte auf diese E-Mail mit Deinen aktualisierten Daten. Sollten sich zusätzlich Deine Bankdaten geändert haben,
+        dann füge Deiner Mail bitte ein neu
+        ausgefülltes Lastschriftmandat bei und sende es uns bis spätestens <b>27.03.2022</b> zu.
+    </p>
+    <p>
+        Falls Du noch Rückfragen zu Deiner Abbuchung oder Mitgliedschaft haben solltest, kannst Du Dich jederzeit über
+        <a href="mailto:schatzmeister@jubo.info">schatzmeister@jubo.info</a> bei mir melden.
+    </p>
+    <p>
+        Vielen Dank, dass Du uns unterstützt!
+    </p>
+    <p>
+        ${SIGNATURE}
+    </p>
+    <p>
+        <i>Bitte beachten: Dieses Schreiben wurde maschinell erzeugt und ist ohne Unterschrift gültig.</i>
+    </p>
+</body>
+</html>

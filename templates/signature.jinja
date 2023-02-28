@@ -1,14 +1,13 @@
 Mit freundlichen Grüßen,<br/>
-Patrick Lindemann<br/>
-Schatzmeister der JuBO e.V.<br/>
+{{ sender.name }}<br/>
+{% if sender.role %}{{ sender.role }}{% endif %}<br/>
 <hr/>
 <br/>
 <b>JuBO e.V.</b><br/>
-Jugend- und Junge Bühne Ostfildern<br/>
 In den Holzwiesen 14<br/>
 73760 Ostfildern<br/>
 <br/>
-<b>E-Mail:</b> <a href="mailto:schatzmeister@jubo.info">schatzmeister@jubo.info</a><br/>
+<b>E-Mail:</b> <a href="mailto:{{ sender.email }}">{{ sender.email }}</a><br/>
 <br/>
 <b>Bankverbindung:</b><br/>
 Volksbank Mittlerer Neckar eG<br/>
