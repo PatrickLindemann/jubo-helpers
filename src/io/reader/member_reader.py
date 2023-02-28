@@ -1,13 +1,8 @@
+from typing import List
 from src.model.member import Member
 from src.io.reader.excel_reader import read_excel
 
-'''
-Constants
-'''
-
-SHEET = 'Mitglieder'
-
-ATTRIBUTE_MAP = {
+MEMBER_HEADER_MAP = {
     'ID': 'id',
     'Anrede': 'salutation',
     'Vorname': 'first_name',
@@ -31,11 +26,29 @@ ATTRIBUTE_MAP = {
     'Anmerkung(en)': 'comment'
 }
 
-'''
-Functions
-'''
+def read_members(
+        workbook_path: str,
+        sheet_name: str = 'Mitglieder',
+        header_map: dict = MEMBER_HEADER_MAP
+) -> List[Member]:
+    """ Read member data from an excel sheets and retrieve a list of Member
+    dataclass objects.
 
-def read_members(file_path):
-    data = read_excel(file_path, SHEET, ATTRIBUTE_MAP)
+    Parameters
+    ----------
+    workbook_path : str
+        The file path to the excel workbook
+    sheet_name : str, optional
+        The name of the worksheet, by default 'Mitglieder'
+    header_map : dict, optional
+        The name mapping for headers. If a header is a key from the dict, it
+        will be substituded by the respective value, by default MEMBER_HEADER_MAP
+
+    Returns
+    -------
+    list[Member]
+        The list of member objects
+    """
+    data = read_excel(workbook_path, sheet_name, header_map)
     members = list(map(lambda x: Member(**x), data))
     return members
