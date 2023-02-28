@@ -1,0 +1,22 @@
+{
+    "contact": {
+        "name": "Max Mustermann",
+        "email": "example@jubo.info",
+        "phone": "+49 1234567890",
+        "role": "1. Vorstandsvorsitzender der JuBO e.V."
+    },
+    "mailServer": {
+        "imap": {
+            "host": "imap.app.magix-online.com",
+            "port": 993,
+            "user": "example@jubo.info",
+            "password": "********"
+        },
+        "smtp": {
+            "host": "smtp.app.magix-online.com",
+            "port": 465,
+            "user": "example@jubo.info",
+            "password": "********"
+        }
+    }
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "properties": {
+    "contact": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "email"
+      ]
+    },
+    "mailServer": {
+      "type": "object",
+      "properties": {
+        "imap": {
+          "$ref": "#/$defs/server"
+        },
+        "smtp": {
+          "$ref": "#/$defs/server"
+        }
+      },
+      "required": [
+        "imap",
+        "smtp"
+      ]
+    }
+  },
+  "required": [
+    "contact",
+    "mailServer"
+  ],
+  "$defs": {
+    "server": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "number"
+        },
+        "user": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "host",
+        "port",
+        "user",
+        "password"
+      ]
+    }
+  }
+}

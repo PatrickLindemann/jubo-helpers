@@ -1,3 +1,12 @@
 {
-    "autoDocstring.docstringFormat": "numpy"
+    "autoDocstring.docstringFormat": "numpy",
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "/config.json",
+                "/config.example.json"
+            ],
+            "url": "/schemas/config.schema.json"
+        }
+    ]
 }
