@@ -69,11 +69,11 @@ if confirm.lower() != 'y':
     exit()
 
 # Read the signature
-with open('./templates/signature.html', 'r') as file:
+with open('./schemas/signature.html', 'r') as file:
     signature = file.read()
 
 # Read the e-Mail style sheet
-with open('./templates/styles.css', 'r') as file:
+with open('./schemas/styles.css', 'r') as file:
     styles = file.read()
 
 print(f'Preparing { len(payments) } payment e-mails.')
