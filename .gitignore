@@ -12,6 +12,7 @@ config.json
 bin/
 build/
 data/
+out/
 develop-eggs/
 dist/
 eggs/
