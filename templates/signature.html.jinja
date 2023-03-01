@@ -1,3 +1,17 @@
+{#
+    The e-mail signature tempalte.
+
+    Variables
+    ---------
+    name: str
+        The sender's name
+    role: str
+       TThe sender's role in the organization
+    email: str
+        The sender's e-mail address
+    phone: str, optional
+        The sender's phone number
+#}
 <p>
     Mit freundlichen Grüßen,<br />
     {{ name }}<br />
@@ -9,6 +23,9 @@
     73760 Ostfildern<br />
     <br />
     <b>E-Mail:</b> <a href="mailto:{{ email }}">{{ email }}</a><br />
+    {% if phone %}
+        <b>Mobil:</b> {{ phone }}<br />
+    {% endif %}
     <br />
     <b>Bankverbindung:</b><br />
     Volksbank Mittlerer Neckar eG<br />

@@ -1,119 +1,122 @@
-<html lang="de">
+{#
+    The template for the yearly membership fee collection email.
 
-<head>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-        }
+    Global Variables
+    ----------------
+    local: Local
+        The local environment for date and currency serialization
 
-        table {
-            text-align: left;
-            border-collapse: collapse;
-        }
+    Variables
+    ---------
+    bill: Bill
+        The bill, which contains member, fee and SEPA mandate information
+    update_deadline_date: date
+        The deadline date to update personal and bank data before the fee
+        collection
+    contact_email: str
+        The e-mail adress of the person responsible for the membership fees
+        and other questions.
+#}
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
 
-        #bill-details tr {
-            border-bottom: 1px solid black;
-        }
+    table {
+        text-align: left;
+        border-collapse: collapse;
+    }
 
-        #bill-details td,
-        #bill-details th {
-            padding: 10px;
-        }
+    #bill-details tr {
+        border-bottom: 1px solid black;
+    }
 
-        #bill-details tr.total-row {
-            border: none;
-        }
+    #bill-details td,
+    #bill-details th {
+        padding: 10px;
+    }
 
-        #bill-details tr.total-row td,
-        tr.total-row th {
-            font-weight: bold;
-        }
+    #bill-details tr.total-row {
+        border: none;
+    }
 
-        #bank-details td {
-            padding-bottom: 5px;
-            padding-right: 10px;
-        }
-    </style>
-</head>
+    #bill-details tr.total-row td,
+    tr.total-row th {
+        font-weight: bold;
+    }
 
-<body>
-    <p>
-        {% if salutation == 'Frau' %}Liebe {% else %}Lieber {% endif %}
-        {{ first_name }},
-    </p>
-    <p>
-        wie jedes Jahr um diese Zeit stehen die Mitgliedsbeiträge für die JuBO
-        e.V. zur Zahlung an. Dein diesjähriger Beitrag setzt sich für Dich wie
-        folgt zusammen:
-    </p>
-    <table id="bill-details">
-        <tr>
-            <th>Pos.</th>
-            <th>Beschreibung</th>
-            <th>Betrag</th>
-        </tr>
-        {% for i, position in enumerate(positions) %}
-        <tr>
-            <td>i</td>
-            <td></td>
-            <td>{{ locale.currency(position.amount) }}</td>
-        </tr>
-        {% endfor %}
-        <tr class="total-row">
-            <td></td>
-            <td>Gesamtsumme</td>
-            <td>{{ locale.currency(total) }}</td>
-        </tr>
-    </table>
-    <p>
-        Da Du uns freundlicherweise ein SEPA-Lastschriftmandat erteilt hast,
-        werden wir den fälligen Betrag i.H.v. <b>{{ locale.currency(total) }}</b>
-        zum <b>{{ value_date }}</b> vom folgenden Konto er SEPA-Lastschrift
-        einziehen:
-    </p>
-    <table id="bank-details">
-        <tr>
-            <td>Kontoinhaber</td>
-            <td>{{ account_owner }}</td>
-        </tr>
-        <tr>
-            <td>IBAN (anonymisiert)</td>
-            <td>{{ anonymized_iban }}</td>
-        </tr>
-        <tr>
-            <td>BIC (anonymisiert)</td>
-            <td>{{ anonymized_bic }}</td>
-        </tr>
-    </table>
-    <p>
-        Du erkennst unsere Abbuchung an der Mandatsreferenz <i>
-            {{ mandate_reference }}</i> und Gläubiger-Identifikationsnummer <i>
-            {{ creditor_id }}</i>. Wir bitten um Kontodeckung zu sorgen.
-    </p>
-    <p>
-        <b>Wichtig:</b> Falls sich seit letztem Jahr Deine personenbezogenen
-        Daten (Name, Adresse, E-Mail, Handynummer, etc.) geändert haben sollten,
-        dann antworte bitte auf diese E-Mail mit Deinen aktualisierten Daten.
-        Sollten sich zusätzlich Deine Bankdaten geändert haben, dann füge Deiner
-        Mail bitte ein neu ausgefülltes Lastschriftmandat bei und sende es uns
-        bis spätestens <b>{{ update_deadline_date }}</b> zu.
-    </p>
-    <p>
-        Falls Du noch Rückfragen zu Deiner Abbuchung oder zu Deiner
-        Mitgliedschaft haben solltest, kannst Du Dich jederzeit über
-        <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
-        bei mir melden.
-    </p>
-    <p>
-        Vielen Dank, dass Du ein Teil der JuBO bist!
-    </p>
-    {% with **contact %}
-        {% include './signature.jinja' %}
-    {% endwith %}
-    <p>
-        <i>Bitte beachten: Dieses Schreiben wurde maschinell erzeugt und ist
-            ohne Unterschrift gültig.</i>
-    </p>
-</body>
-
-</html>
+    #bank-details td {
+        padding-bottom: 5px;
+        padding-right: 10px;
+    }
+</style>
+<p>
+    {% if bill.member.salutation == 'Frau' %}Liebe {% else %}Lieber {% endif %}
+    {{ bill.member.first_name }},
+</p>
+<p>
+    wie jedes Jahr um diese Zeit stehen die Mitgliedsbeiträge für die JuBO
+    e.V. zur Zahlung an. Dein diesjähriger Beitrag setzt sich für Dich wie
+    folgt zusammen:
+</p>
+<table id="bill-details">
+    <tr>
+        <th>Pos.</th>
+        <th>Beschreibung</th>
+        <th>Betrag</th>
+    </tr>
+    {% for i, position in enumerate(bill.positions) %}
+    <tr>
+        <td>i</td>
+        <td></td>
+        <td>{{ locale.currency(position.amount) }}</td>
+    </tr>
+    {% endfor %}
+    <tr class="total-row">
+        <td></td>
+        <td>Gesamtsumme</td>
+        <td>{{ locale.currency(bill.total) }}</td>
+    </tr>
+</table>
+<p>
+    Da Du uns freundlicherweise ein SEPA-Lastschriftmandat erteilt hast,
+    werden wir den fälligen Betrag i.H.v. <b>{{ locale.currency(bill.total())
+        }}</b> zum <b>{{ bill.value_date }}</b> vom folgenden Konto per SEPA-
+    Lastschrift einziehen:
+</p>
+<table id="bank-details">
+    <tr>
+        <td>Kontoinhaber</td>
+        <td>{{ bill.mandate.account_owner }}</td>
+    </tr>
+    <tr>
+        <td>IBAN (anonymisiert)</td>
+        <td>{{ bill.mandate.anonymized_iban() }}</td>
+    </tr>
+    <tr>
+        <td>BIC (anonymisiert)</td>
+        <td>{{ bill.mandate.anonymized_bic() }}</td>
+    </tr>
+</table>
+<p>
+    Du erkennst unsere Abbuchung an der Mandatsreferenz <i>
+        {{ bill.mandate.reference }}</i> und Gläubiger-Identifikationsnummer <i>
+        {{ bill.mandate.creditor_id }}</i>. Wir bitten um Kontodeckung zu sorgen.
+</p>
+<p>
+    <b>Wichtig:</b> Falls sich seit letztem Jahr Deine personenbezogenen
+    Daten (Name, Adresse, E-Mail, Handynummer, etc.) geändert haben sollten,
+    dann antworte bitte auf diese E-Mail mit Deinen aktualisierten Daten.
+    Sollten sich zusätzlich Deine Bankdaten geändert haben, dann füge Deiner
+    Mail bitte ein neu ausgefülltes Lastschriftmandat bei und sende es uns
+    bis spätestens <b>{{ update_deadline_date }}</b> zu.
+</p>
+<p>
+    Falls Du noch Rückfragen zu Deiner Abbuchung oder zu Deiner
+    Mitgliedschaft haben solltest, kannst Du Dich jederzeit über
+    <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+    bei mir melden.
+</p>
+<p>
+    Vielen Dank, dass Du ein Teil der JuBO bist!
+</p>
