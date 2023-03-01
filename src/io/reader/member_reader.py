@@ -1,6 +1,7 @@
 from typing import List
-from src.model.member import Member
+
 from src.io.reader.excel_reader import read_excel
+from src.model.member import Member
 
 MEMBER_HEADER_MAP = {
     'ID': 'id',
@@ -28,27 +29,22 @@ MEMBER_HEADER_MAP = {
 
 def read_members(
         workbook_path: str,
-        sheet_name: str = 'Mitglieder',
-        header_map: dict = MEMBER_HEADER_MAP
+        sheet_name: str
 ) -> List[Member]:
-    """ Read member data from an excel sheets and retrieve a list of Member
-    dataclass objects.
+    """ Read member data from an excel sheet.
 
     Parameters
     ----------
     workbook_path : str
         The file path to the excel workbook
-    sheet_name : str, optional
-        The name of the worksheet, by default 'Mitglieder'
-    header_map : dict, optional
-        The name mapping for headers. If a header is a key from the dict, it
-        will be substituded by the respective value, by default MEMBER_HEADER_MAP
+    sheet_name : str
+        The name of the member worksheet
 
     Returns
     -------
     list[Member]
         The list of member objects
     """
-    data = read_excel(workbook_path, sheet_name, header_map)
+    data = read_excel(workbook_path, sheet_name, MEMBER_HEADER_MAP)
     members = list(map(lambda x: Member(**x), data))
     return members
