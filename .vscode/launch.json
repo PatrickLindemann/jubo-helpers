@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: File helpers.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/helpers.py",
+            "console": "integratedTerminal",
+            "args": [
+                "fee_mails_prepare",
+                "./data/JuBO-Mitgliederliste.xlsx"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}"
+            }
+        }
+    ]
+}
