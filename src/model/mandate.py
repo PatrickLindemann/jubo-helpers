@@ -27,8 +27,12 @@ class Mandate:
         self.reference = reference
         self.id = reference
 
+    def formatted_iban(self) -> str:
+        return self.iban[0:4] + ' ' + self.iban[4:8] + ' ' + self.iban[8:12]\
+            + ' ' + self.iban[12:16] + ' ' + self.iban[16:20] + ' ' + self.iban[20:22]
+
     def anonymized_iban(self) -> str:
-        return self.iban[0:3] + "XXXXXXXXXXXXXXX" + self.iban[-3:]
+        return self.iban[0:3] + 'XXXXXXXXXXXXXXX' + self.iban[-3:]
     
     def anonymized_bic(self) -> str:
-        return self.bic[0:6] + "XXXXX"
+        return self.bic[0:6] + 'XXXXX'
