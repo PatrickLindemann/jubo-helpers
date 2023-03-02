@@ -112,7 +112,7 @@ class FeeMailsPrepareRoutine(Routine):
         for mandate in mandates:
             if mandate.member_id in payments:
                 payments[mandate.member_id]['mandate'] = mandate
-        print(f'Paying members: {len(members)}.')
+        print(f'Paying members: {len(paying_members)}.')
 
         # Prepare the bills
         print('Preparing the bills.')
