@@ -14,7 +14,6 @@ class Mandate:
     city: str
     creditor_id: str
     issue_date: date
-    account_owner: str
     iban: str
     bic: str
     credit_institute: str
