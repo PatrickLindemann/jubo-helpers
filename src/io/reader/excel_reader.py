@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import warnings
 
 def read_excel(
@@ -31,7 +30,7 @@ def read_excel(
     df = pd.read_excel(workbook_path, sheet_name=sheet_name)
     # Replace invalid values (such as NaN) with None
     warnings.filterwarnings('default', module='openpyxl')
-    df = df.replace({ np.nan: None })
+    df = df.replace({ pd.np.nan: None })
     # Retrieve the column header mapping
     headers = df.iloc[header_row - 2]
     keys = list(map(lambda x: header_map[x] if x in header_map else None, headers))
