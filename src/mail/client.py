@@ -2,30 +2,32 @@ import imaplib
 import smtplib
 import ssl
 import time
-from typing import Dict
+from typing import Optional, TypedDict
 from dataclasses import dataclass
 
 from src.model.mail import Mail
 
-@dataclass
-class ServerConfig:
+class ServerConfig(TypedDict):
     host: str
     port: int
     user: str
     password: str
 
-@dataclass
-class EmailClientWithSSLConfig:
+class EmailClientWithSSLConfig(TypedDict):
     imap: ServerConfig
     smtp: ServerConfig
 
+class EmailClientWithSSLConnections(TypedDict):
+    imap: Optional[imaplib.IMAP4_SSL]
+    smtp: Optional[smtplib.SMTP_SSL]
+
 class EmailClientWithSSL:
     config: EmailClientWithSSLConfig
-    connections: Dict[str, any]
+    connections: EmailClientWithSSLConnections
 
-    def __init__(self, config: EmailClientWithSSLConfig):
-        self.config = config
-        self.connections = []
+    def __init__(self, imap: ServerConfig, smtp: ServerConfig):
+        self.config = { 'imap': imap, 'smtp': smtp }
+        self.connections = {}
 
     def test_imap(self) -> bool:
         con = self.__get_imap_connection()
@@ -40,8 +42,10 @@ class EmailClientWithSSL:
         self.__get_smtp_connection()
 
     def send(self, mail: Mail):
-        self.smtp.sendmail(mail.sender, mail.recipients, mail.as_string())
-        self.imap.append('Sent', '\\Seen', imaplib.Time2Internaldate(time.time()), mail.as_string().encode('utf8'))
+        imap = self.__get_imap_connection()
+        smtp = self.__get_smtp_connection()
+        smtp.sendmail(mail.sender, mail.recipients, mail.as_string())
+        imap.append('Sent', '\\Seen', imaplib.Time2Internaldate(time.time()), mail.as_string().encode('utf8'))
 
     def close(self):
         for con in self.connections.values():
@@ -53,9 +57,9 @@ class EmailClientWithSSL:
     def __get_imap_connection(self) -> imaplib.IMAP4_SSL:
         if 'imap' in self.connections:
             return self.connections['imap']
-        con = imaplib.IMAP4_SSL(self.config.imap.host, self.config.imap.port)
+        con = imaplib.IMAP4_SSL(self.config['imap']['host'], self.config['imap']['port'])
         try:
-            con.login(self.config.imap.user, self.config.imap.password)
+            con.login(self.config['imap']['user'], self.config['imap']['password'])
         except Exception as ex:
             con.close()
             raise ex
@@ -65,12 +69,12 @@ class EmailClientWithSSL:
         if 'smtp' in self.connections:
             return self.connections['smtp']
         con = smtplib.SMTP_SSL(
-            self.config.smtp.host,
-            self.config.smtp.port,
+            self.config['smtp']['host'],
+            self.config['smtp']['port'],
             context = ssl.create_default_context()
         )
         try:
-            con.login(self.config.smtp.user, self.config.smtp.password)
+            con.login(self.config['smtp']['user'], self.config['smtp']['password'])
         except Exception as ex:
             con.close()
             raise ex

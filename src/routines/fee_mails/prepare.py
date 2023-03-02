@@ -1,9 +1,10 @@
 import argparse
-import os
 import json
-from typing import List
+import os
 from datetime import date, timedelta
+from typing import List
 
+from humps import camelize
 from jinja2 import Environment, FileSystemLoader
 
 from src.io.reader.fee_reader import read_fees
@@ -17,7 +18,7 @@ from src.utils.format import format_currency, format_date
 class FeeMailsPrepareRoutine(Routine):
 
     def get_name(self) -> str:
-        return 'fee_mails_prepare'
+        return 'fee-mails-prepare'
     
     def get_parser(self) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser()
@@ -179,7 +180,7 @@ class FeeMailsPrepareRoutine(Routine):
             'total': len(messages),
         }
         with open(metadata_path, 'w', encoding='utf-8') as file:
-            json.dump(metadata, file, indent=4)
+            json.dump(camelize(metadata), file, indent=4)
         print(f'Metadata wrote successfully.')
 
         # Write the messages to the output directory
