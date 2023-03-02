@@ -59,7 +59,9 @@ class FeeMailsPrepareRoutine(Routine):
         # Prepare the template engine environment (Jinja) and fetch the template
         print(f'Reading the template from {args.template}.')
         jinja_env = Environment(
-            loader=FileSystemLoader('./templates')
+            loader=FileSystemLoader('./templates'),
+            trim_blocks=True,
+            lstrip_blocks=True
         )
         jinja_env.globals['format_date'] = format_date
         jinja_env.globals['format_currency'] = format_currency
