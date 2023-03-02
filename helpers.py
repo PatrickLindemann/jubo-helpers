@@ -6,15 +6,15 @@ from src.routines.fee_mails.prepare import FeeMailsPrepareRoutine
 from src.routines.fee_mails.send import FeeMailsSendRoutine
 
 routines: List[Routine] = [
-    FeeMailsPrepareRoutine,
-    FeeMailsSendRoutine
+    FeeMailsPrepareRoutine(),
+    FeeMailsSendRoutine()
 ]
 
 def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'routine',
-        choices=[r.get_name() for r in routines]
+        choices=[routine.get_name() for routine in routines]
     )
     parser.add_argument(
         'routine_args',
@@ -22,7 +22,7 @@ def get_parser():
     )
     return parser
 
-if __name__ == 'main':
+if __name__ == '__main__':
     # Read the arguments and validate them
     parser = get_parser()
     args = parser.parse_args()
