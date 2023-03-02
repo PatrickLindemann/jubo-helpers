@@ -18,6 +18,8 @@
     contact_email: str
         The e-mail adress of the person responsible for the membership fees
         and other questions.
+    signature: dict
+        The signature variables.
 #}
 {% extends "base.html.jinja" %}
 {% block head %}
@@ -130,4 +132,23 @@
     <p>
         Vielen Dank, dass Du ein Teil der JuBO bist!
     </p>
+    {% with
+        name=signature.name,
+        email=signature.email,
+        phone=signature.phone,
+        role=signature.role 
+    %}
+        <style>
+            .signature hr {
+                border-color: grey !important;
+            }
+
+            .signature .contact,
+            .signature .contact a,
+            .signature .contact a:hover {
+                color: grey;
+            }
+        </style>
+        {% include "components/signature.html.jinja" %}
+    {% endwith %}
 {% endblock %}

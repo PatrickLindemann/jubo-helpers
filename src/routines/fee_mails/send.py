@@ -5,7 +5,7 @@ from datetime import date
 
 from humps import decamelize
 
-from src.mail.client import EmailClientWithSSL, EmailClientWithSSLConfig
+from src.mail.client import EmailClientWithSSL
 from src.model.mail import Mail
 from src.routines.routine import Routine
 
@@ -35,10 +35,7 @@ class FeeMailsSendRoutine(Routine):
         with open(args.config) as file:
             config = json.load(file)
         config = decamelize(config)
-        print(
-            f'Config read sucessfully.\n Contact: { config["signature"]["name"] }'\
-            f' ({ config["signature"]["email"] })'
-        )
+        print(f'Config read sucessfully.')
 
         # Read the metadata
         metadata_path = os.path.join(args.indir, 'metadata.json')
@@ -60,9 +57,7 @@ class FeeMailsSendRoutine(Routine):
                 'content': content
             })
         assert(len(messages) == metadata['total'])
-        print(f'Read {len(messages)} message(s) successfully.')        
-
-        # TODO: Signature
+        print(f'Read {len(messages)} message(s) successfully.')
 
         # Prepare the e-mails
         mails = []

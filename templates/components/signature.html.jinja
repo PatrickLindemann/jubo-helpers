@@ -12,23 +12,26 @@
     phone: str, optional
         The sender's phone number
 #}
-<p>
-    Mit freundlichen Grüßen,<br />
-    {{ name }}<br />
-    {% if role %}{{ role }}{% endif %}<br />
+<div class="signature">
+    <p class="greeting">
+        Mit freundlichen Grüßen,<br />
+        {{ name }}<br />
+        {% if role %}{{ role }}{% endif %}
+    </p>
     <hr style="border:none; border-bottom:1px solid black;" />
-    <br />
-    <b>JuBO e.V.</b><br />
-    In den Holzwiesen 14<br />
-    73760 Ostfildern<br />
-    <br />
-    <b>E-Mail:</b> <a href="mailto:{{ email }}">{{ email }}</a><br />
-    {% if phone %}
-        <b>Mobil:</b> {{ phone }}<br />
-    {% endif %}
-    <br />
-    <b>Bankverbindung:</b><br />
-    Volksbank Mittlerer Neckar eG<br />
-    IBAN: DE20 6129 0120 0246 7050 00<br />
-    BIC: &nbsp;&nbsp;GENODESNUE1<br />
-</p>
+    <p class="contact">
+        <b>JuBO e.V.</b><br />
+        In den Holzwiesen 14<br />
+        73760 Ostfildern<br />
+        <br />
+        <b>E-Mail:</b> <a href="mailto:{{ email }}">{{ email }}</a><br />
+        {% if phone %}
+            <b>Mobil:</b> {{ phone }}<br />
+        {% endif %}
+        <br />
+        <b>Bankverbindung:</b><br />
+        Volksbank Mittlerer Neckar eG<br />
+        IBAN: DE20 6129 0120 0246 7050 00<br />
+        BIC: &nbsp;&nbsp;GENODESNUE1<br />
+    </p>
+</div>

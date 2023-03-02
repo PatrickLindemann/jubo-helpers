@@ -4,7 +4,7 @@ import os
 from datetime import date, timedelta
 from typing import List
 
-from humps import camelize
+from humps import camelize, decamelize
 from jinja2 import Environment, FileSystemLoader
 
 from src.io.reader.fee_reader import read_fees
@@ -33,6 +33,12 @@ class FeeMailsPrepareRoutine(Routine):
             type=str,
             default='./out/fee-notifications',
             help='The output directory for the generated html messages.'
+        )
+        parser.add_argument(
+            '-c',
+            '--config',
+            default='./config.json',
+            help='The path to the configuration file.'
         )
         parser.add_argument(
             '-t',
@@ -64,7 +70,17 @@ class FeeMailsPrepareRoutine(Routine):
         )
         return parser
 
-    def run(self, args: dict = {}):        
+    def run(self, args: dict = {}):             
+        # Read the config
+        print(f'Reading configuration from { args.config }.')
+        with open(args.config) as file:
+            config = json.load(file)
+        config = decamelize(config)
+        print(
+            f'Config read sucessfully.\n Contact: { config["signature"]["name"] }'\
+            f' ({ config["signature"]["email"] })'
+        )
+
         # Prepare the template engine environment (Jinja) and fetch the template
         print(f'Reading the template from {args.template}.')
         jinja_env = Environment(
@@ -154,7 +170,8 @@ class FeeMailsPrepareRoutine(Routine):
             content = template.render(
                 bill=bill,
                 update_date=args.update_date,
-                contact_email=args.contact_email
+                contact_email=args.contact_email,
+                signature=config['signature']
             )
             messages.append({ 'metadata': metadata, 'content': content })
         print(f'Created {len(messages)} messages successfully.')
