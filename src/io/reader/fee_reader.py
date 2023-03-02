@@ -3,9 +3,9 @@ from typing import List
 from src.io.reader.excel_reader import read_excel
 from src.model.fee import Fee
 
-FEE_HEADER_MAP = {
+FEE_HEADERS = {
     'MitgliedsNr.': 'member_id',
-    'Beitrag': 'fee',
+    'Beitrag': 'amount',
     'Spende': 'donation',
 }
 
@@ -26,6 +26,6 @@ def read_fees(
     list[Fee]
         The list of fee objects
     """
-    data = read_excel(workbook_path, sheet_name, FEE_HEADER_MAP)
-    fee = list(map(lambda x: Fee(**x), data))
-    return fee
+    df = read_excel(workbook_path, sheet_name, FEE_HEADERS)
+    df[['amount', 'donation']] = df[['amount', 'donation']].fillna(0.0)
+    return list(map(lambda x: Fee(**x), df.to_dict(orient='records')))

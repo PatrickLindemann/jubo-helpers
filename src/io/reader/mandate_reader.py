@@ -3,7 +3,8 @@ from typing import List
 from src.io.reader.excel_reader import read_excel
 from src.model.mandate import Mandate
 
-MANDATE_HEADER_MAP = {
+MANDATE_HEADERS = {
+    'Referenz': 'id',
     'MitgliedsNr.': 'member_id',
     'Vorname': 'first_name',
     'Nachname': 'last_name',
@@ -12,9 +13,7 @@ MANDATE_HEADER_MAP = {
     'PLZ': 'zip_code',
     'Ort': 'city',
     'Gläubiger-ID': 'creditor_id',
-    'Referenz': 'reference',
     'Erteilt Am': 'issue_date',
-    'Kontoinhaber': 'account_owner',
     'IBAN': 'iban',
     'BIC': 'bic',
     'Kreditinstitut': 'credit_institute'
@@ -38,6 +37,7 @@ def read_mandates(
     list[Mandate]
         The list of mandate objects
     """
-    data = read_excel(workbook_path, sheet_name, MANDATE_HEADER_MAP)
-    mandate = list(map(lambda x: Mandate(**x), data))
-    return mandate
+    df = read_excel(workbook_path, sheet_name, MANDATE_HEADERS)
+    df['id'] = df['id'].fillna(0).astype(int).astype(str)
+    df['iban'] = df['iban'].str.replace(' ', '')
+    return list(map(lambda x: Mandate(**x), df.to_dict(orient='records')))

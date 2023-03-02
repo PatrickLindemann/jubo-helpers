@@ -3,7 +3,7 @@ from typing import List
 from src.io.reader.excel_reader import read_excel
 from src.model.member import Member
 
-MEMBER_HEADER_MAP = {
+MEMBER_HEADERS = {
     'ID': 'id',
     'Anrede': 'salutation',
     'Vorname': 'first_name',
@@ -45,6 +45,5 @@ def read_members(
     list[Member]
         The list of member objects
     """
-    data = read_excel(workbook_path, sheet_name, MEMBER_HEADER_MAP)
-    members = list(map(lambda x: Member(**x), data))
-    return members
+    df = read_excel(workbook_path, sheet_name, MEMBER_HEADERS)
+    return list(map(lambda x: Member(**x), df.to_dict(orient='records')))

@@ -1,9 +1,12 @@
-import pandas as pd
 import warnings
+
+import pandas as pd
+
 
 def read_excel(
         workbook_path: str,
-        sheet_name: str, header_map: dict = {},
+        sheet_name: str,
+        header_map: dict = {},
         header_row: int = 4
 ) -> pd.DataFrame:
     """ Read data from an excel sheet into a DataFrame.
@@ -25,22 +28,13 @@ def read_excel(
     pd.DataFrame
         The member data in a DataFrame
     """  
-    # Read the workbook
     warnings.filterwarnings('ignore', module='openpyxl')
-    df = pd.read_excel(workbook_path, sheet_name=sheet_name)
-    # Replace invalid values (such as NaN) with None
+    df = pd.read_excel(
+        workbook_path,
+        sheet_name=sheet_name,
+        skiprows=max(0, header_row - 1),
+    )
+    df = df.drop(columns=[col for col in df if col not in header_map.keys()])
+    df = df.rename(columns=header_map)
     warnings.filterwarnings('default', module='openpyxl')
-    df = df.replace({ pd.np.nan: None })
-    # Retrieve the column header mapping
-    headers = df.iloc[header_row - 2]
-    keys = list(map(lambda x: header_map[x] if x in header_map else None, headers))
-    # Read the table data
-    result = []
-    for j in range(header_row - 1, len(df)):
-        row = df.iloc[j]
-        entry = {}
-        for i in range(len(row)):
-            if keys[i]:
-                entry[keys[i]] = row[i]
-        result.append(entry)
-    return result
+    return df
