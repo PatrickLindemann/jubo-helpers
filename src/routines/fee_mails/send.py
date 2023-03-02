@@ -25,7 +25,7 @@ class FeeMailsSendRoutine(Routine):
             '-c',
             '--config',
             default='./config.json',
-            help='The path to the configuration file.'
+            help='The path to the configuration file.\nAllowed file formats: [.json].'
         )
         return parser
 
