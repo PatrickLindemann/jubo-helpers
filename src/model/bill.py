@@ -18,3 +18,6 @@ class Bill:
     positions: List[Position]
     creation_date: date
     value_date: date
+
+    def total(self) -> float:
+        return sum(position.amount for position in self.positions)
