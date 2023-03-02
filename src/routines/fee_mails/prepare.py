@@ -21,41 +21,47 @@ class FeeMailsPrepareRoutine(Routine):
         parser = argparse.ArgumentParser()
         parser.add_argument(
             'workbook',
+            type=str,
             help='The excel workbook containing the member, payment and SEPA mandate data.\nAllowed file formats: [.xls, xlsx, .xlsm, .xslb].'
         )
         parser.add_argument(
             '-o',
             '--outdir',
+            type=str,
             default='./out',
             help='The output directory for the generated html messages.'
         )
         parser.add_argument(
             '-t',
             '--template',
+            type=str,
             default='/fee_mails/message.html.jinja',
             help='The path to the message template file relative to the templates/ folder.\nAllowed file formats: [.html, .jinja, .html.jinja].'
         )
         parser.add_argument(
             '-v',
             '--value-date',
+            type=date.fromisoformat,
             default=date.today() + timedelta(weeks=2),
-            help='The date on which the payments will be collected. It must be at least two (2) weeks in advance.'
+            help='The date on which the payments will be collected. It must be at least two (2) weeks in advance. Format: "yyyy-MM-dd".'
         )
         parser.add_argument(
             '-u',
             '--update-date',
+            type=date.fromisoformat,
             default=date.today() + timedelta(weeks=1),
-            help='The deadline for members to update their personal data or bank details. Should be at most one (1) week before the value date.'
+            help='The deadline for members to update their personal data or bank details. Should be at most one (1) week before the value date. Format: "yyyy-MM-dd".'
         )
         parser.add_argument(
             '-e',
             '--contact-email',
+            type=str,
             default='schatzmeister@jubo.info',
             help='The e-mail adress of the person responsible for the membership fees and other questions.'
         )
         return parser
 
-    def run(self, args: dict = {}):
+    def run(self, args: dict = {}):        
         # Prepare the template engine environment (Jinja) and fetch the template
         print(f'Reading the template from {args.template}.')
         jinja_env = Environment(
@@ -97,14 +103,15 @@ class FeeMailsPrepareRoutine(Routine):
         for payment in payments.values():
             positions = [
                 Position(
-                    description='Fee',
+                    description=f'Jahresbeitrag Mitgliedschaft ({ payment["member"].membership })<br/>'\
+                                f'<small>Für den Zeitraum 01.01.{ (args.value_date.year) } - 31.12.{ args.value_date.year }</small>',
                     amount=payment['fee'].amount
                 )
             ]
             if payment['fee'].donation > 0:
                 positions.append(
                     Position(
-                        description='Donation',
+                        description='Zusätzliche Spende',
                         amount=payment['fee'].donation
                     )
                 )

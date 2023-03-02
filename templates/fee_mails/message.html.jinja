@@ -78,7 +78,7 @@
         {% for position in bill.positions %}
         <tr>
             <td>{{ loop.index }}</td>
-            <td></td>
+            <td>{{ position.description }}</td>
             <td>{{ format_currency(position.amount) }}</td>
         </tr>
         {% endfor %}
