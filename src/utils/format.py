@@ -2,7 +2,7 @@ from datetime import date
 
 
 def format_currency(value: float) -> str:
-    return '{:,.2f}€'
+    return '{:,.2f}€'.format(value)
 
 def format_date(value: date) -> str:
     return value.strftime('%d.%m.%Y')
