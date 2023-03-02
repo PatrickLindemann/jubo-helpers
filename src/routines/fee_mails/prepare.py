@@ -1,5 +1,7 @@
 import argparse
 import os
+import json
+from typing import List
 from datetime import date, timedelta
 
 from jinja2 import Environment, FileSystemLoader
@@ -28,7 +30,7 @@ class FeeMailsPrepareRoutine(Routine):
             '-o',
             '--outdir',
             type=str,
-            default='./out',
+            default='./out/fee-notifications',
             help='The output directory for the generated html messages.'
         )
         parser.add_argument(
@@ -97,7 +99,7 @@ class FeeMailsPrepareRoutine(Routine):
 
         # Prepare the bills
         print('Preparing the bills.')
-        bills = []
+        bills: List[Bill] = []
         total_fees = 0.0
         total_donations = 0.0
         for payment in payments.values():
@@ -134,28 +136,61 @@ class FeeMailsPrepareRoutine(Routine):
 
         # Prepare the message contents and write them
         print(f'Creating the fee notification messages.')
-        messages = {}
+        messages = []
         for bill in bills:
-            name = f'notification_{bill.member.id}'
-            message = template.render(
+            metadata = {
+                'file': f'notification_{bill.member.id}.html',
+                'member': {
+                    'id': bill.member.id,
+                    'first_name': bill.member.first_name,
+                    'last_name': bill.member.last_name,
+                    'email': bill.member.email
+                },
+                'mandate': {
+                    'reference': bill.mandate.reference
+                }
+            }
+            content = template.render(
                 bill=bill,
                 update_date=args.update_date,
                 contact_email=args.contact_email
             )
-            messages[name] = message
+            messages.append({ 'metadata': metadata, 'content': content })
         print(f'Created {len(messages)} messages successfully.')
 
-        # Write the messages to the output directory
         outdir = os.path.join(
             args.outdir,
-            date.today().strftime('%Y-%m-%d')
-        ) 
-        print(f'Writing messages to {outdir}.')
+            date.today().isoformat()
+        )
         if not os.path.exists(outdir):
             os.makedirs(outdir)
-        for name, message in messages.items():
-            with open(os.path.join(outdir, f'{name}.html'), 'w', encoding='utf-8') as file:
-                file.write(message)
+
+        # Write metadata to the output directory
+        metadata_path = os.path.join(outdir, 'metadata.json')
+        print(f'Writing metadata to {metadata_path}.')
+        metadata = {
+            'created_at': date.today().isoformat(),
+            'contact_email': args.contact_email,
+            'value_date': args.value_date.isoformat(),
+            'update_date': args.update_date.isoformat(),
+            'messages': [
+                message['metadata'] for message in messages
+            ],
+            'total': len(messages),
+        }
+        with open(metadata_path, 'w', encoding='utf-8') as file:
+            json.dump(metadata, file, indent=4)
+        print(f'Metadata wrote successfully.')
+
+        # Write the messages to the output directory
+        print(f'Writing messages to {outdir}.')
+        for message in messages:
+            with open(
+                os.path.join(outdir, message['metadata']['file']),
+                'w',
+                encoding='utf-8'
+            ) as file:
+                file.write(message['content'])
         print('Messages wrote successfully.')
 
         print('Exiting.')
