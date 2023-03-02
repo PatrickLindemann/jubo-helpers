@@ -21,7 +21,7 @@
 #}
 {% extends "base.html.jinja" %}
 {% block head %}
-    {{ super() }}
+{{ super() }}
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -58,8 +58,11 @@
 {% endblock %}
 {% block body %}
     <p>
-        {% if bill.member.salutation == 'Frau' %}Liebe {% else %}Lieber {% endif %}
-        {{ bill.member.first_name }},
+        {% if bill.member.salutation == 'Frau' %}
+            Liebe
+        {% else %}
+            Lieber
+        {% endif %} {{ bill.member.first_name }},
     </p>
     <p>
         wie jedes Jahr um diese Zeit stehen die Mitgliedsbeiträge für die JuBO
