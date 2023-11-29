@@ -1,0 +1,61 @@
+{#
+    The template for the yearly membership fee collection email.
+
+    Variables
+    ---------
+    salutation: str
+        The salutation string.
+        e.g. "Sehr geehrte Frau Mustermann" or "Lieber Max".
+    signature_name: str
+        The name of the sender which is put in the signature.
+        e.g. "Patrick Lindemann".
+    signature_role: str
+        The role of the sender in the JuBO, which is put under the name in the signature.
+        e.g. "Schatzmeister der JuBO e.V."
+    signature_email: str
+        The e-mail address of the sender.
+        e.g. "schatzmeister@jubo.info"
+    signature_phone: Optional[str]:
+        The phone number of the sender (optional).
+        e.g. +49 711 123456789
+#}
+{% extends "base.html.jinja" %}
+{% block head %}
+{{ super() }}
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <p>
+        {{ salutation }},
+    </p>
+    <p>
+        wir freuen uns, dass wir dieses Jahr unser 20-jähriges Jubiläum feiern dürfen – zwei Jahrzehnte voller Kreativität, Leidenschaft und unterhaltsamen Theaterstücken mit Jugendlichen und jungen Menschen in Ostfildern.
+    </p>
+    <p>
+        Mit dem diesjährigen Weihnachtsbrief möchten wir einen Überblick über unsere Arbeit des letzen Jahres geben. Dazu zählen:
+        <ol>
+            <li>20 Jahre JuBO: Ein Rückblick auf zwei Jahrzehnte Jugendbühne und Junge Bühne Ostfildern,</li>
+            <li>unser abgesagtes Frühjahrsstück "Das Tribunal", aus dem eine neue Vereinsstruktur entstanden ist,</li>
+            <li>die Kriminalkomödie "Die 39 Stufen" unter der Regie von Torsten Hoffmanns,</li>
+            <li>ein Bericht zu unserer Sonderperformance zum Partnerschaftsjubiläum der Städte Montluel und Ostfildern,</li>
+            <li>Einblicke in unsere Vereinsaktivitäten,</li>
+            <li>Berichte aus dem Vorstand und dem neuen Ältestenrat,</li>
+            <li>ein Ausblick auf kommende Projekte und Vorhaben, die uns im neuen Jahr erwarten.</li>
+        </ol>
+    </p>
+    <p>
+        Im Namen der gesamten JuBO wünsche ich viel Spaß beim Lesen, ein frohes Weihnachtsfest und einen guten Rutsch ins neue Jahr!
+    </p>
+    {% with
+        name=signature_name,
+        role=signature_role,
+        email=signature_email,
+        phone=signature_phone
+    %}
+        {% include "./signature.html.jinja" %}
+    {% endwith %}
+{% endblock %}

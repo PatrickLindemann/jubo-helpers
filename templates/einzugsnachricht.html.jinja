@@ -1,0 +1,185 @@
+{#
+    The template for the yearly membership fee collection email.
+
+    Global Variables
+    ----------------
+    format_date: (value: date) -> str
+        The date formatting function
+    format_currency: (value: float) -> str
+        The currency formatting function
+
+    Variables
+    ---------
+    salutation: str
+        The salutation of the member, i.e. "Herr" or "Frau"
+    first_name: str
+        The first name of the member
+    member_type: str
+        The type of the membership, e.g. "Erwachsen" or "Ermäßigt"
+    amount_fee: float
+        The fee amount
+    amount_donation: Optional[float]
+        The donation amount, optional
+    amount_total: float
+        The total amount of fees
+    account_holder: str
+        The full name of the account holder
+    iban_anonymized: str
+        The (anonymized) IBAN of the bank account, e.g. DE1XXXXXXXXXXXXXXX230
+    bic_anonymized: str
+        The (anonymized) BIC of the bank account, e.g. GENODEXXXXX
+    mandate_reference:
+        The mandate reference for the SEPA direct debit
+    creditor_id: str
+        The creditor id for the SEPA mandate
+    issue_date: date
+        The issue date of the SEPA mandate
+    value_date: date
+        The date when the fee collection is done
+    contact_email: str
+        The e-mail adress of the person responsible for the membership fees
+        and other questions.
+    update_deadline: date
+        The deadline date to update personal and bank data before the fee
+        collection
+    signature_name: str
+        The name of the sender which is put in the signature.
+        e.g. "Patrick Lindemann".
+    signature_role: str
+        The role of the sender in the JuBO, which is put under the name in the signature.
+        e.g. "Schatzmeister der JuBO e.V."
+    signature_email: str
+        The e-mail address of the sender.
+        e.g. "schatzmeister@jubo.info"
+    signature_phone: Optional[str]:
+        The phone number of the sender (optional).
+        e.g. +49 711 123456789
+#}
+{% extends "base.html.jinja" %}
+{% block head %}
+{{ super() }}
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        table {
+            text-align: left;
+            border-collapse: collapse;
+        }
+
+        #bill-details tr {
+            border-bottom: 1px solid black;
+        }
+
+        #bill-details td,
+        #bill-details th {
+            padding: 10px;
+        }
+
+        #bill-details tr.total-row {
+            border: none;
+        }
+
+        #bill-details tr.total-row td,
+        tr.total-row th {
+            font-weight: bold;
+        }
+
+        #bank-details td {
+            padding-bottom: 5px;
+            padding-right: 10px;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <p>
+        {% if salutation == 'Frau' %}
+            Liebe
+        {% else %}
+            Lieber
+        {% endif %} {{ first_name }},
+    </p>
+    <p>
+        wie jedes Jahr um diese Zeit stehen die Mitgliedsbeiträge für die JuBO
+        e.V. zur Zahlung an. Dein diesjähriger Beitrag setzt sich für Dich wie
+        folgt zusammen:
+    </p>
+    <table id="bill-details">
+        <tr>
+            <th>Pos.</th>
+            <th>Beschreibung</th>
+            <th>Betrag</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>
+                Jahresbeitrag Mitgliedschaft ({{ member_type }})<br/>
+                <small>Für den Zeitraum 01.01.{{ value_date.year }} - 31.12.{{ value_date.year }}</small>
+            </td>
+            <td>{{ format_currency(amount_fee) }}</td>
+        </tr>
+        {% if amount_donation > 0 %}
+        <tr>
+            <td>2</td>
+            <td>Zusätzliche Spende</td>
+            <td>{{ format_currency(amount_donation) }}</td>
+        </tr>
+        {% endif %}
+        <tr class="total-row">
+            <td></td>
+            <td>Gesamtsumme</td>
+            <td>{{ format_currency(amount_total) }}</td>
+        </tr>
+    </table>
+    <p>
+        Da Du uns freundlicherweise am {{ format_date(issue_date) }} ein
+        SEPA-Lastschriftmandat erteilt hast, werden wir den fälligen Betrag i.H.v.
+        <b>{{ format_currency(amount_total) }}</b> zum <b>{{ format_date(value_date) }}
+        </b> vom folgenden Konto per SEPA-Lastschrift einziehen:
+    </p>
+    <table id="bank-details">
+        <tr>
+            <td>Kontoinhaber</td>
+            <td>{{ account_holder }}</td>
+        </tr>
+        <tr>
+            <td>IBAN (anonymisiert)</td>
+            <td>{{ iban_anonymized }}</td>
+        </tr>
+        <tr>
+            <td>BIC (anonymisiert)</td>
+            <td>{{ bic_anonymized }}</td>
+        </tr>
+    </table>
+    <p>
+        Du erkennst unsere Abbuchung an der Mandatsreferenz <i>
+            {{ mandate_reference }}</i> und Gläubiger-Identifikationsnummer <i>
+            {{ creditor_id }}</i>. Wir bitten um Kontodeckung zu sorgen.
+    </p>
+    <p>
+        <b>Wichtig:</b> Falls sich seit letztem Jahr Deine personenbezogenen
+        Daten (Name, Adresse, E-Mail, Handynummer, etc.) geändert haben sollten,
+        dann antworte bitte auf diese E-Mail mit Deinen aktualisierten Daten.
+        Sollten sich zusätzlich Deine Bankdaten geändert haben, dann füge Deiner
+        Mail bitte ein neu ausgefülltes Lastschriftmandat bei und sende es uns
+        bis spätestens <b>{{ format_date(update_deadline) }}</b> zu.
+    </p>
+    <p>
+        Falls Du noch Rückfragen zu Deiner Abbuchung oder zu Deiner
+        Mitgliedschaft haben solltest, kannst Du Dich jederzeit über
+        <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+        bei mir melden.
+    </p>
+    <p>
+        Vielen Dank, dass Du ein Teil der JuBO bist!
+    </p>
+    {% with
+        name=signature_name,
+        role=signature_role,
+        email=signature_email,
+        phone=signature_phone
+    %}
+        {% include "./signature.html.jinja" %}
+    {% endwith %}
+{% endblock %}
