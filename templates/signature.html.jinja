@@ -12,14 +12,25 @@
     phone: str, optional
         The sender's phone number
 #}
+<style>
+    .signature-divider {
+        border: None;
+        border-bottom: 1px solid grey !important;
+    }
+    .signature-contact,
+    .signature-contact a,
+    .signature-contact a:hover {
+        color: grey;
+    }
+</style>
 <div class="signature">
     <p class="signature-greeting">
         Mit freundlichen Grüßen,<br />
         {{ name }}<br />
         {% if role %}{{ role }}{% endif %}
     </p>
-    <hr style="border:none; border-bottom:1px solid grey;" />
-    <p class="signature-contact" style="color:grey;">
+    <hr class="signature-divider" />
+    <p class="signature-contact">
         <b>JuBO e.V.</b><br />
         In den Holzwiesen 14<br />
         73760 Ostfildern<br />
