@@ -34,14 +34,16 @@
         The creditor id for the SEPA mandate
     issue_date: date
         The issue date of the SEPA mandate
-    value_date: date
+    year: int
+        The year for which the fees are collected
+    update_date: date
+        The deadline date to update personal and bank data before the fee
+        collection
+    collection_date: date
         The date when the fee collection is done
     contact_email: str
         The e-mail adress of the person responsible for the membership fees
         and other questions.
-    update_deadline: date
-        The deadline date to update personal and bank data before the fee
-        collection
     signature_name: str
         The name of the sender which is put in the signature.
         e.g. "Patrick Lindemann".
@@ -115,7 +117,7 @@
             <td>1</td>
             <td>
                 Jahresbeitrag Mitgliedschaft ({{ member_type }})<br/>
-                <small>Für den Zeitraum 01.01.{{ value_date.year }} - 31.12.{{ value_date.year }}</small>
+                <small>Für den Zeitraum 01.01.{{ year }} - 31.12.{{ year }}</small>
             </td>
             <td>{{ format_currency(amount_fee) }}</td>
         </tr>
@@ -135,7 +137,7 @@
     <p>
         Da Du uns freundlicherweise am {{ format_date(issue_date) }} ein
         SEPA-Lastschriftmandat erteilt hast, werden wir den fälligen Betrag i.H.v.
-        <b>{{ format_currency(amount_total) }}</b> zum <b>{{ format_date(value_date) }}
+        <b>{{ format_currency(amount_total) }}</b> zum <b>{{ format_date(collection_date) }}
         </b> vom folgenden Konto per SEPA-Lastschrift einziehen:
     </p>
     <table id="bank-details">
@@ -163,7 +165,7 @@
         dann antworte bitte auf diese E-Mail mit Deinen aktualisierten Daten.
         Sollten sich zusätzlich Deine Bankdaten geändert haben, dann füge Deiner
         Mail bitte ein neu ausgefülltes Lastschriftmandat bei und sende es uns
-        bis spätestens <b>{{ format_date(update_deadline) }}</b> zu.
+        bis spätestens <b>{{ format_date(update_date) }}</b> zu.
     </p>
     <p>
         Falls Du noch Rückfragen zu Deiner Abbuchung oder zu Deiner
@@ -180,6 +182,6 @@
         email=signature_email,
         phone=signature_phone
     %}
-        {% include "./signature.html.jinja" %}
+        {% include "signature.html.jinja" %}
     {% endwith %}
 {% endblock %}

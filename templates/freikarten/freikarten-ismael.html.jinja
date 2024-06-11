@@ -1,0 +1,68 @@
+{#
+The template for the yearly membership fee collection email.
+
+Variables
+---------
+salutation: str
+The salutation string.
+e.g. "Sehr geehrte Frau Mustermann" or "Lieber Max".
+signature_name: str
+The name of the sender which is put in the signature.
+e.g. "Patrick Lindemann".
+signature_role: str
+The role of the sender in the JuBO, which is put under the name in the signature.
+e.g. "Schatzmeister der JuBO e.V."
+signature_email: str
+The e-mail address of the sender.
+e.g. "schatzmeister@jubo.info"
+signature_phone: Optional[str]:
+The phone number of the sender (optional).
+e.g. +49 711 123456789
+#}
+{% extends "base.html.jinja" %}
+{% block head %}
+{% if %}
+{{ super() }}
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+</style>
+{% endblock %}
+{% block body %}
+<p>
+    {{ salutation }},
+</p>
+<p>
+    in genau einem Monat, am 3. Mai 2024, feiert die JuBO die Premiere unseres diesjährigen Frühjaresstücks "Nennt mich
+    nicht Ismael" mit Spielleiter Gerhard Bauer. Auch dieses Mal möchten wir uns für Ihre Unterstützung bedanken und Sie
+    mit 2 Freikarten für unsere kommenden
+    Aufführungen einladen. Freikarten, die nicht eingelöst werden, verfallen natürlich nicht und können auch bei unseren
+    nächsten Stücken noch genutzt werden. Um die Freikarten einzulösen, bitten wir Sie, uns eine E-Mail mit dem
+    gewünschten Termin und der Anzahl von Plätzen mit Hinweis auf die Freikarten an <a
+        href="mailto:karten@jubo.info">karten@jubo.info</a> zu senden. Dabei
+    stehen folgende Aufführungstermine zur Auswahl:
+<ol>
+    <li>Freitag, 3. Mai 2024,</li>
+    <li>Samstag, 4. Mai 2022,</li>
+    <li>Freitag, 13. Mai 2022,</li>
+    <li>Samstag, 14. Mai 2022,</li>
+</ol>
+jeweils um 19:30 Uhr im Zentrum Zinsholz.
+</p>
+<p>
+    Weitere Informationen zu den Aufführungen und zum Stück finden Sie auf unserer Homepage <a
+        href="http://www.jubo.info/nennt%20mich%20nicht%20ismael.htm">www.jubo.info/</a>
+</p>
+<p>
+    Wir freuen uns schon auf Ihren Besuch!
+</p>
+{% with
+name=signature_name,
+role=signature_role,
+email=signature_email,
+phone=signature_phone
+%}
+{% include "signature.html.jinja" %}
+{% endwith %}
+{% endblock %}
